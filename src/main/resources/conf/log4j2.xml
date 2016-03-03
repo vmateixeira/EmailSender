@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+	<Properties>
+		<Property name="baseDir">log</Property>
+	</Properties>
+	<Appenders>
+		<RollingFile name="RollingFile" fileName="${baseDir}/emailSender.log" filePattern="${baseDir}/emailSender-%d{dd-MM-yyyy}-%i.log.gz">
+			<PatternLayout>
+				<Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="1024 MB"/>
+			</Policies>
+    	</RollingFile>
+		<!--File name="File" fileName="log/emailSender.log">
+			<PatternLayout>
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p [%t] %c{1}:%L - %m%n</Pattern>
+			</PatternLayout>
+		</File-->
+		<Console name="STDOUT" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p [%t] %c{1}:%L - %m%n"/>
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="trace">
+			<!--AppenderRef ref="File" level="DEBUG"/-->
+			<AppenderRef ref="RollingFile" level="DEBUG"/>
+			<AppenderRef ref="STDOUT" level="DEBUG"/>
+		</Root>
+	</Loggers>
+</Configuration>

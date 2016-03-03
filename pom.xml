@@ -1,0 +1,197 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.vframework.email</groupId>
+  <artifactId>EmailSender</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  
+  <!-- Maven properties -->
+  <properties>
+  	<java.version>1.7</java.version>
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	
+	<maven.build.timestamp.format>yyyyMMdd-HHmmss</maven.build.timestamp.format>
+	
+	<maven.compiler.plugin.version>3.3</maven.compiler.plugin.version>
+	<maven.jar.plugin.version>2.6</maven.jar.plugin.version>
+	<maven.dependency.plugin.version>2.10</maven.dependency.plugin.version>
+	<maven.antrun.plugin.version>1.8</maven.antrun.plugin.version>
+	
+  	<log4j.version>2.4.1</log4j.version>
+  	<junit.version>4.12</junit.version>
+  	
+  	<javax.mail.version>1.5.4</javax.mail.version>
+  </properties>
+  
+  <!-- Project dependencies -->
+  <dependencies>
+  	<dependency>
+		<groupId>com.sun.mail</groupId>
+		<artifactId>javax.mail</artifactId>
+		<version>${javax.mail.version}</version>
+	</dependency>
+	
+  	<!-- Logging API -->
+  	<dependency>
+  		<groupId>org.apache.logging.log4j</groupId>
+  		<artifactId>log4j-slf4j-impl</artifactId>
+  		<version>${log4j.version}</version>
+  	</dependency>
+  	
+  	<!-- Logging Implementation -->
+  	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-api</artifactId>
+		<version>${log4j.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-core</artifactId>
+		<version>${log4j.version}</version>
+	</dependency>
+  	
+  	<!-- Testing -->
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<version>${junit.version}</version>
+  		<scope>test</scope>
+  	</dependency>
+  </dependencies>
+  
+  <!-- Artifact repositories -->
+  <repositories>
+  	<repository>
+  		<id>Maven Central</id>
+  		<name>Maven repository</name>
+  		<url>http://central.maven.org/maven2</url>
+  	</repository>
+  	<repository>
+  		<id>Java.net</id>
+  		<name>Java.net repository</name>
+  		<url>https://maven.java.net/content/repositories/public</url>
+  	</repository>
+  	<repository>
+  		<id>JBoss</id>
+  		<name>JBoss repository</name>
+  		<url>https://repository.jboss.org/nexus/content/groups/public</url>
+  	</repository>
+  	<repository>
+  		<id>Spring Release</id>
+  		<name>SpringSource Enterprise Bundle Repository - SpringSource Releases</name>
+  		<url>http://repository.springsource.com/maven/bundles/release</url>
+  	</repository>
+  	<repository>
+  		<id>Spring External</id>
+  		<name>SpringSource Enterprise Bundle Repository - External Releases</name>
+  		<url>http://repository.springsource.com/maven/bundles/external</url>
+  	</repository>
+  </repositories>
+  
+  <!-- Build configurations -->
+  <build>
+  	<finalName>vframework-emailSender-${project.version}-${maven.build.timestamp}</finalName>
+  	
+  	<plugins>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-compiler-plugin</artifactId>
+  			<version>${maven.compiler.plugin.version}</version>
+  			<configuration>
+  				<source>${java.version}</source>
+  				<target>${java.version}</target>
+  				<encoding>${project.build.sourceEncoding}</encoding>
+  				<debug>true</debug>
+  				<showDeprecation>true</showDeprecation>
+  				<showWarnings>true</showWarnings>
+  			</configuration>
+  		</plugin>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-jar-plugin</artifactId>
+  			<version>${maven.jar.plugin.version}</version>
+  			<configuration>
+  				<archive>
+            		<index>true</index>
+            		<manifest>
+              			<addClasspath>true</addClasspath>
+              			<mainClass>com.vframework.email.EmailSender</mainClass>
+              			<classpathPrefix>lib/</classpathPrefix>
+            		</manifest>
+          		</archive>  				
+  				<outputDirectory>${project.basedir}/bin</outputDirectory>
+  			</configuration>
+  		</plugin>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-dependency-plugin</artifactId>
+  			<version>${maven.dependency.plugin.version}</version>
+  			<executions>
+  				<execution>
+  					<id>copy-dependencies</id>
+  					<phase>package</phase>
+  					<goals>
+  						<goal>copy-dependencies</goal>
+  					</goals>
+  					<configuration>
+  						<outputDirectory>${project.build.directory}/dependency-jars</outputDirectory>
+  						<overWriteReleases>false</overWriteReleases>
+  						<overWriteSnapshots>false</overWriteSnapshots>
+  						<overWriteIfNewer>true</overWriteIfNewer>
+  					</configuration>
+  				</execution>
+  			</executions>
+  		</plugin>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-antrun-plugin</artifactId>
+  			<version>${maven.antrun.plugin.version}</version>
+  			<executions>
+  				<execution>
+  					<id>copyBin</id>
+  					<phase>install</phase>
+  					<configuration>
+						<target name="release">
+							<delete dir="release"/>
+							<mkdir dir="release/lib"/>
+							<copy todir="release/lib">
+								<fileset dir="target/dependency-jars"/>
+							</copy>
+							<copy tofile="release/vframework-emailSender-${project.version}.jar" flatten="true">
+								<last>
+									<sort>
+										<date xmlns="antlib:org.apache.tools.ant.types.resources.comparators"/>
+										<resources>
+											<fileset dir="bin">
+												<include name="vframework-emailSender*"/>
+											</fileset>
+										</resources>
+									</sort>
+								</last>
+							</copy>
+  						</target>
+  					</configuration>
+  					<goals>
+  						<goal>run</goal>
+  					</goals>
+  				</execution>
+  				<execution>
+  					<id>copyResources</id>
+  					<phase>install</phase>
+  					<configuration>
+						<target name="release">
+							<copy todir="release">
+								<fileset dir="src/main/resources"/>
+							</copy>
+  						</target>
+  					</configuration>
+  					<goals>
+  						<goal>run</goal>
+  					</goals>
+  				</execution>
+  			</executions>
+  		</plugin>
+  	</plugins>
+  </build>
+</project>
